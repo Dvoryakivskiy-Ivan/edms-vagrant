@@ -1,0 +1,19 @@
+Vagrant.configure("2") do |config|
+
+  config.vm.define "ubuntu" do |u|
+    u.vm.box = "ubuntu/focal64"
+    u.vm.hostname = "edms-ubuntu"
+
+    u.vm.network "forwarded_port", guest: 80, host: 5556, auto_correct: true
+
+    u.vm.provision "shell", path: "provision.sh"
+  end
+
+  config.vm.define "debian" do |d|
+    d.vm.box = "debian/bookworm64"
+    d.vm.hostname = "edms-debian"
+
+    d.vm.provision "shell", path: "provision.sh"
+  end
+
+end
