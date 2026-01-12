@@ -1,0 +1,42 @@
+﻿@model EDMS.IdentityServer.Models.LoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h2>Login</h2>
+
+<form asp-action="Login" method="post">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" asp-for="ReturnUrl" />
+
+    <div>
+        <label asp-for="Email"></label>
+        <input asp-for="Email" />
+        <span asp-validation-for="Email"></span>
+    </div>
+
+    <div>
+        <label asp-for="Password"></label>
+        <input asp-for="Password" />
+        <span asp-validation-for="Password"></span>
+    </div>
+
+    <div>
+        <label>
+            <input asp-for="RememberLogin" />
+            Remember me
+        </label>
+    </div>
+
+    <button type="submit">Login</button>
+</form>
+
+<p>
+    <a asp-action="Register" asp-route-returnUrl="@Model.ReturnUrl">Create account</a>
+</p>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

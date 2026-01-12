@@ -1,0 +1,35 @@
+﻿@model EDMS.IdentityServer.Models.ProfileViewModel
+
+<h2>Profile</h2>
+
+<form asp-action="Profile" method="post">
+    @Html.AntiForgeryToken()
+
+    <div>
+        <label>Username</label>
+        <input value="@Model.UserName" disabled />
+    </div>
+
+    <div>
+        <label>Email</label>
+        <input value="@Model.Email" disabled />
+    </div>
+
+    <div>
+        <label asp-for="FullName"></label>
+        <input asp-for="FullName" />
+        <span asp-validation-for="FullName"></span>
+    </div>
+
+    <div>
+        <label asp-for="Phone"></label>
+        <input asp-for="Phone" />
+        <span asp-validation-for="Phone"></span>
+    </div>
+
+    <button type="submit">Save</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

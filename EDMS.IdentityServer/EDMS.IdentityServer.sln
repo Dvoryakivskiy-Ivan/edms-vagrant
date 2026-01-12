@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36811.4
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EDMS.IdentityServer", "EDMS.IdentityServer\EDMS.IdentityServer.csproj", "{F89A8790-CC2A-4B8A-8CEA-9AA1C52F1BF0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EDMS.MvcClient", "..\EDMS.MvcClient\EDMS.MvcClient.csproj", "{078950A5-94E2-7D13-FBED-2C1AF995635C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F89A8790-CC2A-4B8A-8CEA-9AA1C52F1BF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F89A8790-CC2A-4B8A-8CEA-9AA1C52F1BF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F89A8790-CC2A-4B8A-8CEA-9AA1C52F1BF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F89A8790-CC2A-4B8A-8CEA-9AA1C52F1BF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{078950A5-94E2-7D13-FBED-2C1AF995635C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{078950A5-94E2-7D13-FBED-2C1AF995635C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{078950A5-94E2-7D13-FBED-2C1AF995635C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{078950A5-94E2-7D13-FBED-2C1AF995635C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5C75649B-0C4A-425B-87A9-8DFA627BAF46}
+	EndGlobalSection
+EndGlobal

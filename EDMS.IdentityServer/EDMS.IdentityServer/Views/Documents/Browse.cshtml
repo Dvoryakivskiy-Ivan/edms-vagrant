@@ -1,0 +1,67 @@
+﻿@model IEnumerable<EDMS.MvcClient.Models.Document>
+
+<h2>Documents (Browse)</h2>
+<p>This page allows authorized users to browse and search documents.</p>
+
+<form method="get">
+    <input name="q" value="@ViewBag.Query" placeholder="Search by title/author..." />
+    <input name="type" value="@ViewBag.Type" placeholder="Type (Contract/Order/...)" />
+
+    <select name="status">
+        <option value="">Any status</option>
+        @foreach (var s in Enum.GetValues(typeof(EDMS.MvcClient.Models.DocumentStatus)))
+        {
+            <option value="@s">@s</option>
+        }
+    </select>
+
+    <button type="submit">Filter</button>
+</form>
+
+<hr />
+
+<table border="1" cellpadding="6">
+    <tr>
+        <th>Title</th>
+        <th>Type</th>
+        <th>Author</th>
+        <th>Status</th>
+        <th>Created</th>
+        @if (User.IsInRole("Admin"))
+        {
+            <th>Actions (Admin)</th>
+        }
+    </tr>
+
+    @foreach (var d in Model)
+    {
+        <tr>
+            <td>@d.Title</td>
+            <td>@d.Type</td>
+            <td>@d.Author</td>
+            <td>@d.Status</td>
+            <td>@d.CreatedAt</td>
+
+            @if (User.IsInRole("Admin"))
+            {
+                <td>
+                    <form asp-action="ChangeStatus" method="post">
+                        <input type="hidden" name="id" value="@d.Id" />
+                        <select name="status">
+                            @foreach (var s in Enum.GetValues(typeof(EDMS.MvcClient.Models.DocumentStatus)))
+                            {
+                                <option value="@s">@s</option>
+                            }
+                        </select>
+                        <button type="submit">Change</button>
+                    </form>
+                </td>
+            }
+        </tr>
+    }
+</table>
+
+@if (User.IsInRole("Admin"))
+{
+    <p><a asp-action="Create">Create new document (Admin)</a></p>
+}
