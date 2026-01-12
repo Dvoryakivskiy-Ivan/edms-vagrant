@@ -1,0 +1,26 @@
+﻿@{
+    ViewData["Title"] = "EDMS Documentation";
+}
+
+<h1>Welcome to EDMS Documentation</h1>
+
+<ul>
+    <li>Registration, login, profile (on IdentityServer)</li>
+    <li>Protected subroutines pages доступные только после авторизации</li>
+</ul>
+
+@if (User.Identity?.IsAuthenticated != true)
+{
+    <a asp-controller="Account" asp-action="Login">Login</a>
+    <a asp-controller="Account" asp-action="Register">Register</a>
+}
+else
+{
+    <p>Hello, @User.Identity?.Name</p>
+    <a href="https://localhost:7007/Account/Profile">Profile</a>
+
+    <form asp-controller="Account" asp-action="Logout" method="post" style="display:inline;">
+        @Html.AntiForgeryToken()
+        <button type="submit">Logout</button>
+    </form>
+}

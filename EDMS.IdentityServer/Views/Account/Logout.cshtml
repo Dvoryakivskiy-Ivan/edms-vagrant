@@ -1,0 +1,22 @@
+﻿@model EDMS.IdentityServer.Models.LogoutViewModel
+
+<h2>Logout</h2>
+<p>Confirm logout?</p>
+
+<div style="margin-top:20px;">
+    <form asp-action="Logout" method="post" style="display:inline-block;">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="LogoutId" />
+        <input type="hidden" asp-for="BackUrl" />
+        <input type="hidden" asp-for="PostLogoutUrl" />
+
+        <button type="submit" class="btn btn-danger">
+            Confirm logout
+        </button>
+    </form>
+
+    <a class="btn btn-secondary" style="margin-left:10px;"
+       href="@Model.BackUrl">
+        Back
+    </a>
+</div>

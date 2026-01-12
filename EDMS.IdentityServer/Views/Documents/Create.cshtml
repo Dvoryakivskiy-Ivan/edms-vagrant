@@ -1,0 +1,28 @@
+﻿<h2>Create Document (Admin)</h2>
+<p>This page allows Admin to create a new document.</p>
+
+@if (ViewBag.Error != null)
+{
+    <p style="color:red;">@ViewBag.Error</p>
+}
+
+<form method="post">
+    <div>
+        <label>Title</label>
+        <input name="title" />
+    </div>
+
+    <div>
+        <label>Type</label>
+        <input name="type" placeholder="Contract / Order / Memo" />
+    </div>
+
+    <div>
+        <label>Content</label>
+        <textarea name="content" rows="6" cols="60"></textarea>
+    </div>
+
+    <button type="submit">Create</button>
+</form>
+
+<p><a asp-action="Browse">Back to browse</a></p>
