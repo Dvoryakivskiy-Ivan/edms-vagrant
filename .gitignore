@@ -5,3 +5,4 @@ obj/
 *.suo
 packages/
 /.vs
+/EDMS.MvcClient.Tests
