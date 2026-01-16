@@ -1,0 +1,108 @@
+﻿@model IEnumerable<EDMS.MvcClient.Controllers.SearchController.DocumentSearchRow>
+@using EDMS.MvcClient.Models
+@{
+    ViewData["Title"] = "Search Documents";
+}
+
+<h2>Search Documents</h2>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-3">
+        <label class="form-label">Created From (UTC)</label>
+        <input type="datetime-local" class="form-control" name="createdFromUtc" value="@(ViewBag.CreatedFromUtc != null ? ((DateTime)ViewBag.CreatedFromUtc).ToString("yyyy-MM-ddTHH:mm") : "")" />
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Created To (UTC)</label>
+        <input type="datetime-local" class="form-control" name="createdToUtc" value="@(ViewBag.CreatedToUtc != null ? ((DateTime)ViewBag.CreatedToUtc).ToString("yyyy-MM-ddTHH:mm") : "")" />
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Decided From (UTC)</label>
+        <input type="datetime-local" class="form-control" name="decidedFromUtc" value="@(ViewBag.DecidedFromUtc != null ? ((DateTime)ViewBag.DecidedFromUtc).ToString("yyyy-MM-ddTHH:mm") : "")" />
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Decided To (UTC)</label>
+        <input type="datetime-local" class="form-control" name="decidedToUtc" value="@(ViewBag.DecidedToUtc != null ? ((DateTime)ViewBag.DecidedToUtc).ToString("yyyy-MM-ddTHH:mm") : "")" />
+    </div>
+
+    <div class="col-md-4">
+        <label class="form-label">Departments (list)</label>
+        <select class="form-select" multiple name="departmentIds" asp-items="ViewBag.Departments"></select>
+    </div>
+
+    <div class="col-md-4">
+        <label class="form-label">Document Types (list)</label>
+        <select class="form-select" multiple name="documentTypeIds" asp-items="ViewBag.DocumentTypes"></select>
+    </div>
+
+    <div class="col-md-4">
+        <label class="form-label">Status</label>
+        <select class="form-select" name="status">
+            <option value="">(any)</option>
+            <option value="@DocumentStatus.Pending">Pending</option>
+            <option value="@DocumentStatus.Approved">Approved</option>
+            <option value="@DocumentStatus.Rejected">Rejected</option>
+        </select>
+    </div>
+
+    <div class="col-md-4">
+        <label class="form-label">Title starts with</label>
+        <input class="form-control" name="titleStartsWith" value="@ViewBag.TitleStartsWith" />
+    </div>
+
+    <div class="col-md-4">
+        <label class="form-label">Title ends with</label>
+        <input class="form-control" name="titleEndsWith" value="@ViewBag.TitleEndsWith" />
+    </div>
+
+    <div class="col-md-4">
+        <label class="form-label">Decided By contains (dependent)</label>
+        <input class="form-control" name="decidedBy" value="@ViewBag.DecidedBy" />
+    </div>
+
+    <div class="col-12">
+        <button class="btn btn-primary" type="submit">Search</button>
+        <a class="btn btn-outline-secondary" asp-controller="Documents" asp-action="Browse">Back to Documents</a>
+    </div>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Department</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th>Last Decision</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var r in Model)
+        {
+            <tr>
+                <td>
+                    <a asp-controller="Documents" asp-action="Details" asp-route-id="@r.Id">@r.Title</a>
+                    @if (!string.IsNullOrWhiteSpace(r.Number))
+                    {
+                        <div class="text-muted small">@r.Number</div>
+                    }
+                </td>
+                <td>@r.DocumentTypeName</td>
+                <td>@r.DepartmentName</td>
+                <td>@r.Status</td>
+                <td>@r.CreatedAtUtc.ToString("yyyy-MM-dd HH:mm") UTC</td>
+                <td>
+                    @if (r.LastDecisionAtUtc != null)
+                    {
+                        <span>@(r.LastDecisionBy ?? "-"), @r.LastDecisionAtUtc.Value.ToString("yyyy-MM-dd HH:mm") UTC</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

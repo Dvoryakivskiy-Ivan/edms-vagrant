@@ -1,0 +1,53 @@
+﻿@{
+    ViewData["Title"] = "API UI (New / v2)";
+}
+
+<h2>Documents (New UI — v2 fields)</h2>
+<p class="text-muted">This page uses <code>v2</code> API and shows the new fields (Priority, Confidentiality, Due, Owner, Amount, Tags).</p>
+
+<table class="table table-bordered" id="docs2">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Department</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Priority</th>
+            <th>Confidentiality</th>
+            <th>Due (UTC)</th>
+            <th>Owner</th>
+            <th>Amount</th>
+            <th>Tags</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    (async function () {
+      const res = await fetch('/api/v2/documents');
+      const data = await res.json();
+
+      const tbody = document.querySelector('#docs2 tbody');
+      tbody.innerHTML = '';
+
+      for (const d of data) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${escapeHtml(d.title)} ${d.number ? `<span class="text-muted small">(${escapeHtml(d.number)})</span>` : ''}</td>
+          <td>${escapeHtml(d.department?.name ?? '')}</td>
+          <td>${escapeHtml(d.documentType?.name ?? '')}</td>
+          <td>${escapeHtml(d.status)}</td>
+          <td>${escapeHtml(d.priority)}</td>
+          <td>${escapeHtml(d.confidentiality)}</td>
+          <td>${escapeHtml((d.dueAtUtc ?? '').replace('T',' ').replace('Z',''))}</td>
+          <td>${escapeHtml(d.owner ?? '')}</td>
+          <td>${d.amount ?? ''}</td>
+          <td>${escapeHtml(d.tags ?? '')}</td>
+        `;
+        tbody.appendChild(tr);
+      }
+
+      function escapeHtml(s){ return (s ?? '').toString().replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
+    })();
+</script>

@@ -1,0 +1,43 @@
+﻿@{
+    ViewData["Title"] = "API UI (Old / Compatible)";
+}
+
+<h2>Documents (Old UI — compatible)</h2>
+<p class="text-muted">This page uses <code>v2</code> API but shows the old table layout (Title/Type/Department/Status/Created).</p>
+
+<table class="table table-striped" id="docs">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Department</th>
+            <th>Status</th>
+            <th>Created (UTC)</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    (async function () {
+      const res = await fetch('/api/v2/documents');
+      const data = await res.json();
+
+      const tbody = document.querySelector('#docs tbody');
+      tbody.innerHTML = '';
+
+      for (const d of data) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${escapeHtml(d.title)} ${d.number ? `<span class="text-muted small">(${escapeHtml(d.number)})</span>` : ''}</td>
+          <td>${escapeHtml(d.documentType?.name ?? '')}</td>
+          <td>${escapeHtml(d.department?.name ?? '')}</td>
+          <td>${escapeHtml(d.status)}</td>
+          <td>${escapeHtml((d.createdAtUtc ?? '').replace('T',' ').replace('Z',''))}</td>
+        `;
+        tbody.appendChild(tr);
+      }
+
+      function escapeHtml(s){ return (s ?? '').toString().replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
+    })();
+</script>

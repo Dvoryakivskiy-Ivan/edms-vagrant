@@ -10,15 +10,50 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 // Connection string
+// Provider is selected via appsettings.json: Database:Provider
+// Supports: SqlServer / Postgres / Sqlite / InMemory
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var provider = builder.Configuration["Database:Provider"]?.Trim() ?? "SqlServer";
+
+string? connectionString = provider.ToLowerInvariant() switch
+{
+    "sqlserver" or "mssql" => builder.Configuration.GetConnectionString("SqlServer"),
+    "postgres" or "postgresql" => builder.Configuration.GetConnectionString("Postgres"),
+    "sqlite" => builder.Configuration.GetConnectionString("Sqlite"),
+    "inmemory" or "memory" => builder.Configuration.GetConnectionString("InMemory") ?? "EDMS_Identity_InMemory",
+    _ => throw new InvalidOperationException(
+        $"Unknown Database:Provider '{provider}'. Use: SqlServer | Postgres | Sqlite | InMemory")
+};
 
 
 // DbContext (ASP.NET Identity)
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+{
+    switch (provider.ToLowerInvariant())
+    {
+        case "sqlserver":
+        case "mssql":
+            options.UseSqlServer(connectionString);
+            break;
+
+        case "postgres":
+        case "postgresql":
+            options.UseNpgsql(connectionString);
+            break;
+
+        case "sqlite":
+            options.UseSqlite(connectionString);
+            break;
+
+        case "inmemory":
+        case "memory":
+            options.UseInMemoryDatabase(
+                builder.Configuration.GetConnectionString("InMemory")?.Trim() ?? "EDMS_Identity_InMemory");
+            break;
+
+    }
+});
 
 
 // ASP.NET Identity (Users + Roles) 
@@ -34,13 +69,12 @@ builder.Services
         options.Password.RequireDigit = true;
         options.Password.RequireUppercase = true;
         options.Password.RequireNonAlphanumeric = true;
-
-       
     })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
-// External Authentication (Google)
+
+
 
 builder.Services.AddAuthentication()
     .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
@@ -61,12 +95,13 @@ builder.Services.AddIdentityServer(options =>
     options.Events.RaiseFailureEvents = true;
     options.Events.RaiseSuccessEvents = true;
 })
-.AddAspNetIdentity<ApplicationUser>()                  
+.AddAspNetIdentity<ApplicationUser>()
 .AddInMemoryIdentityResources(Config.IdentityResources)
 .AddInMemoryApiScopes(Config.ApiScopes)
 .AddInMemoryApiResources(Config.ApiResources)
 .AddInMemoryClients(Config.Clients)
 .AddDeveloperSigningCredential();                      // DEV only
+
 
 // UI 
 builder.Services.AddControllersWithViews();
@@ -75,31 +110,17 @@ builder.Services.AddRazorPages();
 var app = builder.Build();
 
 
-// Middleware pipeline
-
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
-}
-
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-app.UseRouting();
-
-
-app.UseAuthentication();   
-app.UseIdentityServer();   // endpoints OAuth2/OIDC
-app.UseAuthorization();
-
-app.MapDefaultControllerRoute();
-app.MapRazorPages();
-
-
-// Seed Roles + Admin user
+// Create DB (Code First) + Seed Roles + Admin user
+// Runs at startup for all providers.
 
 using (var scope = app.Services.CreateScope())
 {
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+
+    db.Database.Migrate();
+
+
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
@@ -123,7 +144,7 @@ using (var scope = app.Services.CreateScope())
             Email = adminEmail,
             EmailConfirmed = true,
             FullName = "System Administrator",
-            PhoneNumber = "+380501112233" 
+            PhoneNumber = "+380501112233"
         };
 
         var result = await userManager.CreateAsync(adminUser, adminPassword);
@@ -136,5 +157,25 @@ using (var scope = app.Services.CreateScope())
             await userManager.AddToRoleAsync(adminUser, "Admin");
     }
 }
+
+
+// Middleware pipeline
+
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
+
+//app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+
+app.UseAuthentication();
+app.UseIdentityServer();   // endpoints OAuth2/OIDC
+app.UseAuthorization();
+
+app.MapDefaultControllerRoute();
+app.MapRazorPages();
 
 app.Run();

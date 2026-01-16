@@ -1,8 +1,21 @@
-.vagrant/
+# build
 bin/
 obj/
+
+# Visual Studio
+.vs/
 *.user
 *.suo
-packages/
-/.vs
-/EDMS.MvcClient.Tests
+
+# Vagrant
+.vagrant/
+
+# SonarQube / scanner outputs
+.sonarqube/
+sonarqube/
+.scannerwork/
+
+# IdentityServer signing keys (DO NOT COMMIT)
+**/keys/*.json
+**/node_modules/
+**/keys/

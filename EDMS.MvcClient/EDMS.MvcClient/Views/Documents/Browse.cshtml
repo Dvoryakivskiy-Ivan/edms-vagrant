@@ -1,0 +1,68 @@
+﻿@using EDMS.MvcClient.Models
+@model List<Document>
+
+@{
+    ViewData["Title"] = "Documents";
+}
+
+<h1>Documents</h1>
+
+<form method="get" asp-action="Browse" class="row g-2 mb-3">
+    <div class="col-md-6">
+        <input class="form-control" name="q" value="@(ViewBag.Q ?? "")" placeholder="Search text..." />
+    </div>
+    <div class="col-md-3">
+        <select class="form-select" name="sort">
+            <option value="date_desc" selected="@(ViewBag.Sort == "date_desc")">Newest</option>
+            <option value="date_asc" selected="@(ViewBag.Sort == "date_asc")">Oldest</option>
+            <option value="title_asc" selected="@(ViewBag.Sort == "title_asc")">Title A-Z</option>
+            <option value="title_desc" selected="@(ViewBag.Sort == "title_desc")">Title Z-A</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <button class="btn btn-primary w-100" type="submit">Apply</button>
+    </div>
+</form>
+
+<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Number</th>
+            <th>Type</th>
+            <th>Department</th>
+            <th>Status</th>
+            <th>Priority</th>
+            <th>Conf.</th>
+            <th>Due (UTC)</th>
+            <th>Owner</th>
+            <th>Amount</th>
+            <th>Created (UTC)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var d in Model)
+        {
+            <tr>
+                <td><a asp-action="Details" asp-route-id="@d.Id">@d.Title</a></td>
+                <td>@d.Number</td>
+                <td>@d.DocumentType?.Name</td>
+                <td>@d.Department?.Name</td>
+                <td>@d.Status</td>
+                <td>@d.Priority</td>
+                <td>@d.Confidentiality</td>
+                <td>@(d.DueAtUtc?.ToString("yyyy-MM-dd HH:mm") ?? "-")</td>
+                <td>@(string.IsNullOrWhiteSpace(d.Owner) ? "-" : d.Owner)</td>
+                <td>@(d.Amount.HasValue? d.Amount.Value.ToString("0.00") : "-")</td>
+                <td>@d.CreatedAtUtc.ToString("yyyy-MM-dd HH:mm")</td>
+                <td class="text-end">
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@d.Id">Delete</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

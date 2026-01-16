@@ -1,0 +1,30 @@
+﻿@model IEnumerable<EDMS.MvcClient.Models.DocumentType>
+@{
+    ViewData["Title"] = "Document Types";
+}
+
+<h2>Document Types</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Prefix</th>
+            <th>Created</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var t in Model)
+        {
+            <tr>
+                <td>@t.Name</td>
+                <td>@(t.Prefix ?? "-")</td>
+                <td>@t.CreatedAtUtc.ToString("yyyy-MM-dd HH:mm") UTC</td>
+                <td class="text-end">
+                    <a class="btn btn-sm btn-outline-primary" asp-action="Details" asp-route-id="@t.Id">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

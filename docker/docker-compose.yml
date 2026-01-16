@@ -1,0 +1,27 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: edms_postgres
+    environment:
+      POSTGRES_DB: edms
+      POSTGRES_USER: edms
+      POSTGRES_PASSWORD: edms_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - edms_pg_data:/var/lib/postgresql/data
+
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: edms_mssql
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Your_password123!"
+    ports:
+      - "1433:1433"
+    volumes:
+      - edms_mssql_data:/var/opt/mssql
+
+volumes:
+  edms_pg_data:
+  edms_mssql_data:

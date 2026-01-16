@@ -1,0 +1,150 @@
+﻿@using EDMS.MvcClient.Models
+@model List<DocumentAction>
+
+@{
+    ViewData["Title"] = "Actions Register";
+    var departments = ViewBag.Departments as List<Department> ?? new();
+    var types = ViewBag.DocumentTypes as List<DocumentType> ?? new();
+}
+
+<h1>Actions Register</h1>
+
+<form method="get" class="mb-3">
+    <div class="row g-2">
+        <div class="col-md-3">
+            <label class="form-label">From (UTC)</label>
+            <input class="form-control" type="datetime-local" name="fromUtc"
+                   value="@(ViewBag.FromUtc is DateTime f ? f.ToString("yyyy-MM-ddTHH:mm") : "")" />
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">To (UTC)</label>
+            <input class="form-control" type="datetime-local" name="toUtc"
+                   value="@(ViewBag.ToUtc is DateTime t ? t.ToString("yyyy-MM-ddTHH:mm") : "")" />
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Department</label>
+            <select class="form-select" name="departmentId">
+                <option value="">(any)</option>
+                @foreach (var d in departments)
+                {
+                    <option value="@d.Id" selected="@(ViewBag.DepartmentId?.ToString() == d.Id.ToString())">@d.Name</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Document Type</label>
+            <select class="form-select" name="documentTypeId">
+                <option value="">(any)</option>
+                @foreach (var x in types)
+                {
+                    <option value="@x.Id" selected="@(ViewBag.DocumentTypeId?.ToString() == x.Id.ToString())">@x.Name</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Title starts with</label>
+            <input class="form-control" name="titleStartsWith" value="@(ViewBag.TitleStartsWith ?? "")" />
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Title ends with</label>
+            <input class="form-control" name="titleEndsWith" value="@(ViewBag.TitleEndsWith ?? "")" />
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Performed by</label>
+            <input class="form-control" name="performedBy" value="@(ViewBag.PerformedBy ?? "")" />
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Action type</label>
+            <select class="form-select" name="actionType">
+                <option value="">(any)</option>
+                @foreach (var v in Enum.GetValues(typeof(DocumentActionType)).Cast<DocumentActionType>())
+                {
+                    var intVal = (int)v;
+                    <option value="@intVal" selected="@(ViewBag.ActionType?.ToString() == intVal.ToString())">@v</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-12">
+            <button class="btn btn-primary" type="submit">Apply</button>
+            <a class="btn btn-outline-secondary" asp-action="Index">Reset</a>
+        </div>
+    </div>
+</form>
+
+<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th>When (UTC)</th>
+            <th>Action</th>
+            <th>Document</th>
+            <th>Type</th>
+            <th>Department</th>
+
+            <th>Status</th>
+            <th>Priority</th>
+            <th>Conf.</th>
+            <th>Due (UTC)</th>
+            <th>Owner</th>
+            <th>Amount</th>
+
+            <th>Performed By</th>
+            <th>Note</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var a in Model)
+        {
+            var doc = a.Document;
+
+            <tr>
+                <td>@a.PerformedAtUtc.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>@a.ActionType</td>
+
+                <td>
+                    @if (doc != null)
+                    {
+                        <div>
+                            <a asp-controller="Documents" asp-action="Details" asp-route-id="@a.DocumentId">
+                                @doc.Title
+                            </a>
+                        </div>
+                        <div class="text-muted small">
+                            #@doc.Number
+                            • <a asp-action="Details" asp-route-id="@a.Id">action #@a.Id</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div>Document #@a.DocumentId</div>
+                        <div class="text-muted small">
+                            <a asp-action="Details" asp-route-id="@a.Id">action #@a.Id</a>
+                        </div>
+                    }
+                </td>
+
+                <td>@doc?.DocumentType?.Name</td>
+                <td>@doc?.Department?.Name</td>
+
+                <td>@doc?.Status</td>
+                <td>@doc?.Priority</td>
+                <td>@doc?.Confidentiality</td>
+                <td>@(doc?.DueAtUtc?.ToString("yyyy-MM-dd HH:mm") ?? "-")</td>
+                <td>@(string.IsNullOrWhiteSpace(doc?.Owner) ? "-" : doc!.Owner)</td>
+                <td>@(doc?.Amount.HasValue == true ? doc.Amount.Value.ToString("0.00") : "-")</td>
+
+                <td>@a.PerformedBy</td>
+                <td>@a.Note</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<p class="text-muted">Showing up to 500 newest actions.</p>

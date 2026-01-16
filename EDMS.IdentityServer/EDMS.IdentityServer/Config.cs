@@ -5,16 +5,16 @@ namespace EDMS.IdentityServer;
 
 public static class Config
 {
-    
-    // Identity Resources (OIDC)
-   
+
+    private const string MvcBaseUrl = "https://localhost:7219";
+
+
     public static IEnumerable<IdentityResource> IdentityResources =>
         new IdentityResource[]
         {
             new IdentityResources.OpenId(),
             new IdentityResources.Profile(),
 
-            // roles 
             new IdentityResource(
                 name: "roles",
                 displayName: "User roles",
@@ -22,30 +22,24 @@ public static class Config
             )
         };
 
- 
-    // API Scopes
-  
     public static IEnumerable<ApiScope> ApiScopes =>
         new ApiScope[]
         {
             new ApiScope("edms_api", "EDMS API")
         };
 
-  
-    // API Resources
-  
+ 
     public static IEnumerable<ApiResource> ApiResources =>
         new ApiResource[]
         {
             new ApiResource("edms_api", "EDMS API")
             {
                 Scopes = { "edms_api" },
-                UserClaims = { "role" } 
+                UserClaims = { "role" }
             }
         };
 
-    // Clients
-    
+
     public static IEnumerable<Client> Clients =>
         new Client[]
         {
@@ -65,14 +59,17 @@ public static class Config
                     new Secret("mvc_secret".Sha256())
                 },
 
-                RedirectUris =
-                {
-                    "https://localhost:7219/signin-oidc"
-                },
-
-               PostLogoutRedirectUris =
+              RedirectUris =
+              {
+                  "https://localhost:7219/signin-oidc"
+              },
+              PostLogoutRedirectUris =
                {
-                   "https://localhost:7219/Account/LocalLogout"
+               "https://localhost:7219/signout-callback-oidc"
+                  },
+              AllowedCorsOrigins =
+               {
+                MvcBaseUrl
                },
 
                 RequireConsent = false,
@@ -85,7 +82,6 @@ public static class Config
                     "edms_api"
                 },
 
-                
                 AlwaysIncludeUserClaimsInIdToken = true
             }
         };

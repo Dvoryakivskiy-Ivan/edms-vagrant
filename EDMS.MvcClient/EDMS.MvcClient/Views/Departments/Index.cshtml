@@ -1,0 +1,30 @@
+﻿@model IEnumerable<EDMS.MvcClient.Models.Department>
+@{
+    ViewData["Title"] = "Departments";
+}
+
+<h2>Departments</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Code</th>
+            <th>Created</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var d in Model)
+        {
+            <tr>
+                <td>@d.Name</td>
+                <td>@d.Code</td>
+                <td>@d.CreatedAtUtc.ToString("yyyy-MM-dd HH:mm") UTC</td>
+                <td class="text-end">
+                    <a class="btn btn-sm btn-outline-primary" asp-action="Details" asp-route-id="@d.Id">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

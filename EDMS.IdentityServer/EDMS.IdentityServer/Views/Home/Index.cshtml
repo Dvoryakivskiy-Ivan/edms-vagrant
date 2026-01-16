@@ -1,26 +1,10 @@
 ﻿@{
-    ViewData["Title"] = "EDMS Documentation";
+    ViewData["Title"] = "IdentityServer";
 }
 
-<h1>Welcome to EDMS Documentation</h1>
+<h1>EDMS IdentityServer</h1>
+<p>Server is running.</p>
 
 <ul>
-    <li>Registration, login, profile (on IdentityServer)</li>
-    <li>Protected subroutines pages доступные только после авторизации</li>
+    <li><a href="/.well-known/openid-configuration">OpenID configuration</a></li>
 </ul>
-
-@if (User.Identity?.IsAuthenticated != true)
-{
-    <a asp-controller="Account" asp-action="Login">Login</a>
-    <a asp-controller="Account" asp-action="Register">Register</a>
-}
-else
-{
-    <p>Hello, @User.Identity?.Name</p>
-    <a href="https://localhost:7007/Account/Profile">Profile</a>
-
-    <form asp-controller="Account" asp-action="Logout" method="post" style="display:inline;">
-        @Html.AntiForgeryToken()
-        <button type="submit">Logout</button>
-    </form>
-}

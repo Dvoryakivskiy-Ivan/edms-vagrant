@@ -1,0 +1,33 @@
+﻿@model EDMS.MvcClient.Models.DocumentAction
+
+@{
+    ViewData["Title"] = $"Action #{Model.Id}";
+}
+
+<h1>Action #@Model.Id</h1>
+
+<dl class="row">
+    <dt class="col-sm-2">When (UTC)</dt>
+    <dd class="col-sm-10">@Model.PerformedAtUtc.ToString("yyyy-MM-dd HH:mm:ss")</dd>
+
+    <dt class="col-sm-2">Action</dt>
+    <dd class="col-sm-10">@Model.ActionType</dd>
+
+    <dt class="col-sm-2">Performed By</dt>
+    <dd class="col-sm-10">@Model.PerformedBy</dd>
+
+    <dt class="col-sm-2">Note</dt>
+    <dd class="col-sm-10">@Model.Note</dd>
+
+    <dt class="col-sm-2">Document</dt>
+    <dd class="col-sm-10">
+        <a asp-controller="Documents" asp-action="Details" asp-route-id="@Model.DocumentId">
+            @Model.Document?.Title ?? $"Document #{Model.DocumentId}"
+        </a>
+        <div class="text-muted small">
+            Type: @Model.Document?.DocumentType?.Name, Department: @Model.Document?.Department?.Name
+        </div>
+    </dd>
+</dl>
+
+<a class="btn btn-outline-secondary" asp-action="Index">Back</a>

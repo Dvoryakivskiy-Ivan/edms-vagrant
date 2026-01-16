@@ -1,0 +1,80 @@
+﻿@using EDMS.MvcClient.Models
+@model Document
+
+@{
+    ViewData["Title"] = "Document Details";
+}
+
+<h1>@Model.Title</h1>
+
+<div class="mb-3">
+    <div><b>Number:</b> @Model.Number</div>
+    <div><b>Status:</b> @Model.Status</div>
+    <div><b>Department:</b> @Model.Department?.Name</div>
+    <div><b>Type:</b> @Model.DocumentType?.Name</div>
+    <div><b>Priority:</b> @Model.Priority</div>
+    <div><b>Confidentiality:</b> @Model.Confidentiality</div>
+    <div><b>Due (UTC):</b> @(Model.DueAtUtc?.ToString("yyyy-MM-dd HH:mm") ?? "-")</div>
+    <div><b>Owner:</b> @(string.IsNullOrWhiteSpace(Model.Owner) ? "-" : Model.Owner)</div>
+    <div><b>Amount:</b> @(Model.Amount.HasValue? Model.Amount.Value.ToString("0.00") : "-")</div>
+    <div><b>Tags:</b> @(string.IsNullOrWhiteSpace(Model.Tags) ? "-" : Model.Tags)</div>
+    <div><b>Created:</b> @Model.CreatedAtUtc.ToString("yyyy-MM-dd HH:mm") UTC</div>
+    <div><b>Created By:</b> @Model.CreatedBy</div>
+</div>
+
+<h3>Content</h3>
+<div class="border rounded p-3 mb-4" style="white-space: pre-wrap;">@Model.Content</div>
+
+@if (Model.Approvals?.Any() == true)
+{
+    <h3>Approval history</h3>
+    <table class="table table-sm table-striped">
+        <thead>
+            <tr>
+                <th>Decision</th>
+                <th>By</th>
+                <th>At (UTC)</th>
+                <th>Comment</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var a in Model.Approvals)
+            {
+                <tr>
+                    <td>@a.Decision</td>
+                    <td>@a.DecidedBy</td>
+                    <td>@a.DecidedAtUtc.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@a.Comment</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (Model.Actions?.Any() == true)
+{
+    <h3>Actions register</h3>
+    <table class="table table-sm table-striped">
+        <thead>
+            <tr>
+                <th>When (UTC)</th>
+                <th>Action</th>
+                <th>By</th>
+                <th>Note</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var x in Model.Actions.OrderByDescending(x => x.PerformedAtUtc))
+            {
+                <tr>
+                    <td>@x.PerformedAtUtc.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@x.ActionType</td>
+                    <td>@x.PerformedBy</td>
+                    <td>@x.Note</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<a class="btn btn-outline-secondary" asp-action="Browse">Back</a>

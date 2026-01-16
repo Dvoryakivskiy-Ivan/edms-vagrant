@@ -1,0 +1,93 @@
+﻿@using EDMS.MvcClient.Models
+@model Document
+
+@{
+    ViewData["Title"] = "Create Document";
+}
+
+<h1>Create Document</h1>
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="DocumentTypeId" class="form-label">Document Type</label>
+        <select asp-for="DocumentTypeId" class="form-select" asp-items="ViewBag.DocumentTypes">
+            <option value="">-- select --</option>
+        </select>
+        <span asp-validation-for="DocumentTypeId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="DepartmentId" class="form-label">Department</label>
+        <select asp-for="DepartmentId" class="form-select" asp-items="ViewBag.Departments">
+            <option value="">-- select --</option>
+        </select>
+        <span asp-validation-for="DepartmentId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Number" class="form-label"></label>
+        <input asp-for="Number" class="form-control" />
+        <div class="form-text">Optional. If empty, it may auto-generate from type prefix.</div>
+        <span asp-validation-for="Number" class="text-danger"></span>
+    </div>
+
+    <div class="row g-3 mb-3">
+        <div class="col-md-3">
+            <label asp-for="Priority" class="form-label"></label>
+            <select asp-for="Priority" class="form-select" asp-items="Html.GetEnumSelectList<DocumentPriority>()"></select>
+        </div>
+
+        <div class="col-md-3">
+            <label asp-for="Confidentiality" class="form-label"></label>
+            <select asp-for="Confidentiality" class="form-select" asp-items="Html.GetEnumSelectList<DocumentConfidentiality>()"></select>
+        </div>
+
+        <div class="col-md-3">
+            <label asp-for="DueAtUtc" class="form-label">Due (UTC)</label>
+            <input asp-for="DueAtUtc" type="datetime-local" class="form-control" />
+            <span asp-validation-for="DueAtUtc" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-3">
+            <label asp-for="Amount" class="form-label"></label>
+            <input asp-for="Amount" class="form-control" />
+            <span asp-validation-for="Amount" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Owner" class="form-label"></label>
+        <input asp-for="Owner" class="form-control" />
+        <span asp-validation-for="Owner" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Tags" class="form-label"></label>
+        <input asp-for="Tags" class="form-control" />
+        <div class="form-text">Example: finance;urgent;contract</div>
+        <span asp-validation-for="Tags" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Content" class="form-label"></label>
+        <textarea asp-for="Content" class="form-control" rows="8"></textarea>
+        <span asp-validation-for="Content" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+    <a class="btn btn-secondary" asp-action="Browse">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
